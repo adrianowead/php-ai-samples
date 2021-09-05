@@ -70,15 +70,11 @@ RUN chown -R www-data:www-data /var/www/html \
 # instalar composer a partir do outro container
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 
-# instalar apenas pacotes para produção
-RUN composer install --no-dev
-
-# instalar pacotes npm
-RUN npm install \
-    && npm run production
+COPY docker/dockerrun.sh /usr/local/bin/dockerrun.sh
+RUN chmod +x /usr/local/bin/dockerrun.sh
 
 # abrindo porta 80
 EXPOSE 80
 
 # iniciando supervisor
-CMD ["supervisord"]
+CMD ["dockerrun.sh"]
