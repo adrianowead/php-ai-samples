@@ -5,8 +5,8 @@ services:
       context: .
       dockerfile: ./docker/Dockerfile
     image: "wead/php-ai-samples"
-    container_name: "php_ai_sampes"
-    hostname: "host_php_ai_sampes"
+    container_name: "php_ai_samples"
+    hostname: "host_php_ai_samples"
     restart: always
     ports:
       - 8080:80
