@@ -4,9 +4,9 @@ services:
     build:
       context: .
       dockerfile: ./docker/Dockerfile
-    image: "wead/tsp-genetic-php"
-    container_name: "tsp_genetic_php"
-    hostname: "host_tsp_genetic_php"
+    image: "wead/php-ai-samples"
+    container_name: "php_ai_sampes"
+    hostname: "host_php_ai_sampes"
     restart: always
     ports:
       - 8080:80
