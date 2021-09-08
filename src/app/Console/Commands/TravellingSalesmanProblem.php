@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Challenges\TravellingSalesman as ChallengesTravellingSalesman;
 use App\Genetic\TravellingSalesman;
 use Illuminate\Console\Command;
 
@@ -38,6 +39,46 @@ class TravellingSalesmanProblem extends Command
      */
     public function handle(): void
     {
+        $challenge = new ChallengesTravellingSalesman;
+        $challenge->addRouteCost(
+            from: "A",
+            to: "B",
+            cost: 2.0,
+        )->addRouteCost(
+            from: "A",
+            to: "C",
+            cost: 4.0,
+        )->addRouteCost(
+            from: "B",
+            to: "C",
+            cost: 1.0,
+        )->addRouteCost(
+            from: "D",
+            to: "A",
+            cost: 4.0,
+        )->addRouteCost(
+            from: "D",
+            to: "F",
+            cost: 2.0,
+        )->addRouteCost(
+            from: "F",
+            to: "C",
+            cost: 2.0,
+        )->addRouteCost(
+            from: "F",
+            to: "B",
+            cost:2.0,
+        )->addRouteCost(
+            from: "A",
+            to: "E",
+            cost:5.0,
+        );
+
+        dd([
+            'all cities' => $challenge->getAllCities(),
+            'all routes' => $challenge->getAllRoutes(),
+        ]);
+
         $genetic = new TravellingSalesman;
         $genetic->fillPopulation();
 
