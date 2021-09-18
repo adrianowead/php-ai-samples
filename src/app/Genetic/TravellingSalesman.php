@@ -9,23 +9,15 @@ use Swoole\Coroutine\WaitGroup;
 
 final class TravellingSalesman extends Genetic{
     private $requiredChromosomes = [
-        'left' => 0.0,
-        'right' => 0.0,
+        'input' => [
+            ''
+        ],
+        'layer0' => [],
+        'output' => [],
     ];
 
     private $mutateRules = [
         'probability' => 0.1, // 0.1 > 1.0
-        // cromosomos que podem sofrer mutação e seus limites
-        'chromosomes' => [
-            'left' => [
-                'min' => 0.1,
-                'max' => 1.0,
-            ],
-            'right' => [
-                'min' => 0.1,
-                'max' => 1.0,
-            ],
-        ],
     ];
 
     public function __construct(

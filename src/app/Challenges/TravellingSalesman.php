@@ -21,18 +21,10 @@ final class TravellingSalesman
     /**
      * As rotas são sempre bi direcionais, ou seja, o custo de ida é o mesmo de volta
      */
-    public function addRouteCost(string $from, string $to, float $cost, int $maxPassFrom = 1, int $maxPassTo = 1): TravellingSalesman
+    public function addRouteCost(string $from, string $to, float $cost): TravellingSalesman
     {
         if($cost <= 0) {
             throw new \Exception("O custo da rota precisa ser maior do que zero.");
-        }
-
-        if($maxPassFrom < 1) {
-            throw new \Exception("É necessário permitir a passagem pela cidade de origem, pelo menos uma vez.");
-        }
-
-        if($maxPassTo < 1) {
-            throw new \Exception("É necessário permitir a passagem pela cidade de destino, pelo menos uma vez.");
         }
 
         $routeId = self::getRouteId(
@@ -50,8 +42,8 @@ final class TravellingSalesman
             'cost' => $cost,
         ]);
 
-        if(!$this->cities->contains($from)) $this->cities->add($from);
-        if(!$this->cities->contains($to)) $this->cities->add($to);
+        if(!$this->cityAlreadyExists($from)) $this->addCity(name: $from);
+        if(!$this->cityAlreadyExists($to)) $this->addCity(name: $to);
 
         return $this;
     }
@@ -76,7 +68,7 @@ final class TravellingSalesman
 
     public function setStartCity(string $start): TravellingSalesman
     {
-        if(!$this->cities->contains($start)) {
+        if(!$this->cityAlreadyExists($start)) {
             throw new \Exception("A cidade de origem informada, não existe.");
         }
 
@@ -87,13 +79,58 @@ final class TravellingSalesman
 
     public function setTargetCity(string $target): TravellingSalesman
     {
-        if(!$this->cities->contains($target)) {
+        if(!$this->cityAlreadyExists($target)) {
             throw new \Exception("A cidade alvo informada, não existe.");
         }
 
         $this->targetCity = $target;
 
         return $this;
+    }
+
+    /**
+     * Criar cidade
+     */
+    public function addCity(string $name): TravellingSalesman
+    {
+        if($this->cityAlreadyExists($name)) {
+            throw new \Exception("A cidade informada já existe.");
+        }
+
+        $this->cities->put($name, [
+            'maxPass' => 0,
+            'countPassed' => 0,
+        ]);
+
+        return $this;
+    }
+
+    /**
+     * Alterar parâmetros
+     */
+    public function setCity(string $name, int $maxPass = null, int $countPassed = null): TravellingSalesman
+    {
+        if(!$this->cityAlreadyExists($name)) {
+            $this->addCity(
+                name: $name,
+            );
+        }
+
+        $params = $this->cities->get($name);
+
+        if($maxPass != null) $params['maxPass'] = $maxPass;
+        if($countPassed != null) $params['countPassed'] = $countPassed;
+
+        if(!empty($params)) {
+            $this->cities = $this->cities->replace([$name => $params]);
+        }
+
+        return $this;
+    }
+
+    public function cityAlreadyExists(string $name): bool
+    {
+        return $this->cities->has($name);
     }
 
     /**
@@ -117,6 +154,18 @@ final class TravellingSalesman
 
         if(!$status) {
             throw new \Exception("É obrigatório ter pelo menos três cidades cadastradas (via rota).");
+        }
+
+        $status = $status && $this->cities->where('maxPass', 0)->count() == 0;
+
+        if(!$status) {
+            throw new \Exception("Todas as cidades precisam permitir pelo menos uma passagem (maxPass).");
+        }
+
+        $status = $status && $this->cities->where('countPassed', 0)->count() == $this->cities->count();
+
+        if(!$status) {
+            throw new \Exception("Todas as cidades precisam começar com o contador de passagem zerado (countPassed).");
         }
 
         $status = $status && isset($this->routes) && $this->routes->count() > 2;
