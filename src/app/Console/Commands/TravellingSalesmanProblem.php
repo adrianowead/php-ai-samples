@@ -40,6 +40,7 @@ class TravellingSalesmanProblem extends Command
     public function handle(): void
     {
         $challenge = new ChallengesTravellingSalesman;
+
         $challenge->addRouteCost(
             from: "A",
             to: "B",
@@ -52,34 +53,15 @@ class TravellingSalesmanProblem extends Command
             from: "B",
             to: "C",
             cost: 1.0,
-        )->addRouteCost(
-            from: "D",
-            to: "A",
-            cost: 4.0,
-        )->addRouteCost(
-            from: "D",
-            to: "F",
-            cost: 2.0,
-        )->addRouteCost(
-            from: "F",
-            to: "C",
-            cost: 2.0,
-        )->addRouteCost(
-            from: "F",
-            to: "B",
-            cost:2.0,
-        )->addRouteCost(
-            from: "A",
-            to: "E",
-            cost:5.0,
         );
 
-        dd([
-            'all cities' => $challenge->getAllCities(),
-            'all routes' => $challenge->getAllRoutes(),
-        ]);
+        $challenge->setStartCity("A")
+            ->setTargetCity("C");
 
-        $genetic = new TravellingSalesman;
+        $genetic = new TravellingSalesman(
+            challenge: $challenge,
+        );
+
         $genetic->fillPopulation();
 
         dump([

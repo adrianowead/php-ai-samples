@@ -2,6 +2,7 @@
 
 namespace App\Genetic;
 
+use App\Challenges\TravellingSalesman as ChallengesTravellingSalesman;
 use App\Genetic\Base\Genetic;
 use App\Genetic\Base\Individual;
 use Swoole\Coroutine\WaitGroup;
@@ -26,6 +27,24 @@ final class TravellingSalesman extends Genetic{
             ],
         ],
     ];
+
+    public function __construct(
+        private ChallengesTravellingSalesman $challenge,
+        protected int $limitPopulation = 100,
+    ) {
+        parent::__construct(limitPopulation: $limitPopulation);
+
+        $this->validateChallenge();
+    }
+
+    public function validateChallenge(): TravellingSalesman
+    {
+        if(!$this->challenge->readyToRun()) {
+            throw new \Exception("O desafio não atende a todos os requisitos para execução.");
+        }
+
+        return $this;
+    }
 
     /**
      * Completa a população com base nos indivíduos existentes, se não existirem, cria indivíduos novos
