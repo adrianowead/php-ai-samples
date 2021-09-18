@@ -8,6 +8,7 @@ abstract class Genetic implements Evolution{
     protected Collection $population; // coleção com todos os indivíduos vivos
     protected int $generation = 1; // contador de gerações
     protected int $globalCountPopulation = 0; // contador de total de indivíduos entre todas as gerações
+    protected int $maxGenerations = 100; // valor máximo de gerações, atingindo esse limite mesmo sem resultado, parar com o melhor indivíduo
 
     public function __construct(
         protected int $limitPopulation = 100, // limite populacional a cada geração

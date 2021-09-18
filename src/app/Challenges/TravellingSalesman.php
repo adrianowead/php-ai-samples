@@ -48,14 +48,14 @@ final class TravellingSalesman
         return $this;
     }
 
-    public function getAllCities(): array
+    public function getAllCities(): Collection
     {
-        return $this->cities->sort()->all();
+        return $this->cities->sort();
     }
 
-    public function getAllRoutes(): array
+    public function getAllRoutes(): Collection
     {
-        return $this->routes->sort()->all();
+        return $this->routes->sort();
     }
 
     public static function getRouteId(string $from, string $to): string

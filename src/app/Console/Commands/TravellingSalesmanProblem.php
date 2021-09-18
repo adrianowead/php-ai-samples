@@ -43,13 +43,13 @@ class TravellingSalesmanProblem extends Command
 
         $challenge->setCity(
             name: "A",
-            maxPass: 1
+            maxPass: 2
         )->setCity(
             name: "B",
-            maxPass: 1
+            maxPass: 2
         )->setCity(
             name: "C",
-            maxPass: 1
+            maxPass: 2
         );
 
         $challenge->addRouteCost(
@@ -68,15 +68,6 @@ class TravellingSalesmanProblem extends Command
 
         $challenge->setStartCity("A")
             ->setTargetCity("C");
-
-        dd(
-            $challenge,
-            [
-                'cities' => $challenge->getAllCities(),
-                'routes' => $challenge->getAllRoutes(),
-                'ready' => $challenge->readyToRun(),
-            ],
-        );
 
         $genetic = new TravellingSalesman(
             challenge: $challenge,

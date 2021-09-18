@@ -8,13 +8,7 @@ use App\Genetic\Base\Individual;
 use Swoole\Coroutine\WaitGroup;
 
 final class TravellingSalesman extends Genetic{
-    private $requiredChromosomes = [
-        'input' => [
-            ''
-        ],
-        'layer0' => [],
-        'output' => [],
-    ];
+    private $requiredChromosomes = [];
 
     private $mutateRules = [
         'probability' => 0.1, // 0.1 > 1.0
@@ -27,6 +21,8 @@ final class TravellingSalesman extends Genetic{
         parent::__construct(limitPopulation: $limitPopulation);
 
         $this->validateChallenge();
+
+        $this->extractChromosomesFromCallenge();
     }
 
     public function validateChallenge(): TravellingSalesman
@@ -66,6 +62,8 @@ final class TravellingSalesman extends Genetic{
     private function fillEmptyPopulation(int $limitToFill, bool $waitExec = false): void
     {
         $list = array_chunk(array_fill(0, $limitToFill, null), 10);
+
+        dd($this->requiredChromosomes);
 
         $ctx = $this;
 
@@ -116,13 +114,12 @@ final class TravellingSalesman extends Genetic{
      */
     private function doMutate(Individual &$individual): void
     {
+        dd($individual);
+
         $probability = mt_rand(1, 10) <= ( $this->mutateRules['probability'] * 10 );
 
         if($probability) {
-            $list = array_keys($this->mutateRules['chromosomes']);
-            shuffle($list);
-
-            $chromosome = $list[0];
+            $chromosome = mt_rand(0, );
 
             $individual->$chromosome = $this->randFloat(
                 $this->mutateRules['chromosomes'][$chromosome]['min'],
@@ -152,9 +149,47 @@ final class TravellingSalesman extends Genetic{
 
     /**
      * Cálculo de aptidão do indivíduo
+     *
+     * No caso do caixeiro viajante o objetivo é:
+     *
+     * - Visitar todas as cidades
+     * - Limitado à quantidade de visitas permitidas em cada cidade
+     * - Com o menor custo possível, soma de todas as rotas visitas e todas as vezes visitadas
+     * - Iniciar na cidade 'start' e terminar na cidade 'target'
      */
     public function fitness(): float
     {
         return 0.0;
+    }
+
+    /**
+     * Com base nas propriedades do desafio
+     * Montar a estrutura base dos cromosomos que irão compor o DNA dos indivíduos
+     */
+    private function extractChromosomesFromCallenge(): void
+    {
+        $cities = $this->challenge->getAllCities();
+
+        // multiplicando as cidades e possibilidades de visitas
+
+        // Exemplo: cidade A com 2 visitas
+        // DNA: AA
+
+        // Exemplo: cidade A com 2 visitas, B com 4 visitas e C com 3 visitas
+        // DNA: AABBBBCC
+
+        // com isso teremos a quantidade de casas, as mutações serão a mudança de uma casa em outra.
+        // mantendo a proporção da quantidade de cada um.
+
+        // Exemplo: DNA base AABBBBCC
+        // Mutação: ABABCBCB
+
+        $dna = [];
+
+        foreach($cities as $id => $city) {
+            $dna = array_merge($dna, array_fill(0, $city['maxPass'], $id));
+        }
+
+        $this->requiredChromosomes = $dna;
     }
 }
