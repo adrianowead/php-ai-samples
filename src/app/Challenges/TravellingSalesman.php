@@ -55,7 +55,7 @@ final class TravellingSalesman
 
     public function getAllRoutes(): array
     {
-        return $this->routes->all();
+        return $this->routes->sort()->all();
     }
 
     public static function getRouteId(string $from, string $to): string
