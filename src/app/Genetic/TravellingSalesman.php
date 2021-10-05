@@ -7,7 +7,8 @@ use App\Genetic\Base\Genetic;
 use App\Genetic\Base\Individual;
 use Swoole\Coroutine\WaitGroup;
 
-final class TravellingSalesman extends Genetic{
+final class TravellingSalesman extends Genetic
+{
     private $requiredChromosomes = [];
 
     private $mutateRules = [
@@ -44,14 +45,14 @@ final class TravellingSalesman extends Genetic{
 
         $limitToFill = $this->limitPopulation - $this->population->count();
 
-        $doEvolution = $this->population->count() > 0;
-
         $this->fillEmptyPopulation(
             limitToFill: $limitToFill,
             waitExec: true,
         );
 
-        if($doEvolution) {
+        $this->avoidTwins();
+
+        if($this->population->count() > 0) {
             //
         }
     }
@@ -62,8 +63,6 @@ final class TravellingSalesman extends Genetic{
     private function fillEmptyPopulation(int $limitToFill, bool $waitExec = false): void
     {
         $list = array_chunk(array_fill(0, $limitToFill, null), 10);
-
-        dd($this->requiredChromosomes);
 
         $ctx = $this;
 
@@ -139,6 +138,18 @@ final class TravellingSalesman extends Genetic{
         $num = $min + $range * (mt_rand() / mt_getrandmax());
 
         return $num;
+    }
+
+    /**
+     * A diversidade genética é o que garante a evolução
+     * Por tanto, não permitir que gêmeos idênticos geneticamente
+     * permaneçam na população
+     */
+    private function avoidTwins(): void
+    {
+        $this->population = $this->population->unique(function(Individual $individual){
+            return $individual->getDna();
+        });
     }
 
     /**
