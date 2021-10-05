@@ -34,5 +34,5 @@ interface Evolution{
     /**
      * Cálculo de aptidão do indivíduo
      */
-    public function fitness(): float;
+    public function fitness(Individual $individual): float;
 }

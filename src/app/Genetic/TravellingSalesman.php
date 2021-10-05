@@ -81,11 +81,7 @@ final class TravellingSalesman extends Genetic{
                     $count = sizeof($chunk);
 
                     for($y = 0; $y < $count; $y++) {
-                        $individual = new Individual;
-
-                        foreach( $ctx->requiredChromosomes as $chromosome => $value ){
-                            $individual->$chromosome = $value;
-                        }
+                        $individual = new Individual(dna: $ctx->requiredChromosomes);
 
                         $ctx->mutate($individual);
 
@@ -112,21 +108,28 @@ final class TravellingSalesman extends Genetic{
     /**
      * Executa uma mutação aleatória no atributo relacionao a este problema
      */
-    private function doMutate(Individual &$individual): void
+    private function doMutate(Individual $individual): void
     {
-        dd($individual);
-
         $probability = mt_rand(1, 10) <= ( $this->mutateRules['probability'] * 10 );
 
+        $probability = 1;
+
         if($probability) {
-            $chromosome = mt_rand(0, );
+            $to = $from = mt_rand(0, sizeof($individual->getDna()) - 1);
 
-            $individual->$chromosome = $this->randFloat(
-                $this->mutateRules['chromosomes'][$chromosome]['min'],
-                $this->mutateRules['chromosomes'][$chromosome]['max'],
-            );
+            while($to == $from) {
+                $to = mt_rand(0, sizeof($individual->getDna()) - 1);
+            }
 
-            $individual->fitness = $this->randFloat(0.2,0.9);
+            $dnaMutation = $individual->getDna();
+
+            $swap = $dnaMutation[$to];
+            $dnaMutation[$to] = $dnaMutation[$from];
+            $dnaMutation[$from] = $swap;
+
+            $individual->mutate($dnaMutation);
+
+            $individual->fitness = $this->fitness(individual: $individual);
         }
     }
 
@@ -157,8 +160,10 @@ final class TravellingSalesman extends Genetic{
      * - Com o menor custo possível, soma de todas as rotas visitas e todas as vezes visitadas
      * - Iniciar na cidade 'start' e terminar na cidade 'target'
      */
-    public function fitness(): float
+    public function fitness(Individual $individual): float
     {
+        dd("Calcular corretamente o fitness do indivíduo, para então criar a função que verifica se algum deles resolve o problema, o fitness vai de 0.0 até 1.0, sendo 1.0 a solução");
+
         return 0.0;
     }
 
